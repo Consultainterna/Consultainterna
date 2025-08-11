@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Processando...</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f9f9f9;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: #444;
+      user-select: none;
+    }
+
+    #container {
+      text-align: center;
+      padding: 30px 40px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 320px;
+      position: relative;
+    }
+
+    .spinner {
+      margin: 0 auto 20px auto;
+      width: 48px;
+      height: 48px;
+      border: 5px solid #ccc;
+      border-top: 5px solid #555;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .text {
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 0.03em;
+      color: #555;
+      margin-bottom: 24px;
+      user-select: text;
+    }
+
+    /* Barra de progresso */
+    .progress-bar-container {
+      width: 100%;
+      height: 12px;
+      background: #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #27ae60; /* verde escuro */
+      border-radius: 8px 0 0 8px;
+      transition: width 0.1s linear;
+    }
+
+    .countdown {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+      user-select: text;
+    }
+  </style>
+</head>
+<body>
+  <div id="container" role="main" aria-live="polite" aria-busy="true" aria-label="Carregando">
+    <div class="spinner" aria-hidden="true"></div>
+    <div class="text">Processando, aguarde...</div>
+    <div class="progress-bar-container" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="countdown" id="countdownText" aria-live="polite">10 segundos restantes</div>
+  </div>
+
+  <script>
+    const tempoTotal = 10; // segundos
+    let tempoRestante = tempoTotal;
+    const progressBar = document.getElementById('progressBar');
+    const countdownText = document.getElementById('countdownText');
+    const container = document.getElementById('container');
+
+    // URL para redirecionar (mude aqui para seu site real)
+    const urlRedirecionar = "https://www.seusite.com";
+
+    // Atualiza a barra e o texto a cada 100ms (0.1s)
+    const intervalo = 100;
+    const totalIntervals = (tempoTotal * 1000) / intervalo;
+    let currentInterval = 0;
+
+    const timer = setInterval(() => {
+      currentInterval++;
+      const porcentagem = (currentInterval / totalIntervals) * 100;
+      progressBar.style.width = porcentagem + '%';
+
+      // Atualiza o tempo restante a cada segundo
+      if (currentInterval % 10 === 0) {
+        tempoRestante--;
+        countdownText.textContent = tempoRestante > 1
+          ? tempoRestante + ' segundos restantes'
+          : tempoRestante === 1
+            ? '1 segundo restante'
+            : 'Finalizando...';
+      }
+
+      if (currentInterval >= totalIntervals) {
+        clearInterval(timer);
+        // Atualiza ARIA
+        container.setAttribute('aria-busy', 'false');
+        container.setAttribute('aria-label', 'Redirecionando');
+
+        // Redireciona para o site desejado
+        window.location.href = urlRedirecionar;
+      }
+    }, intervalo);
+  </script>
+</body>
+</html>
